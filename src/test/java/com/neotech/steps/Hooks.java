@@ -34,7 +34,8 @@ public class Hooks extends BaseClass{
 
 	            scenario.attach(pic, "image/png", scenario.getName());
 	        }
-	    } catch (Exception e) {
+	    } catch (Exception e) 
+	    {
 	        System.out.println("⚠️ Screenshot failed: " + e.getMessage());
 	    }
 

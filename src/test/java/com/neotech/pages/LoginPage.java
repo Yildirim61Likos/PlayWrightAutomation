@@ -2,11 +2,12 @@ package com.neotech.pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.neotech.utils.CommonMethods;
 
-public class LoginPage {
+public class LoginPage extends CommonMethods {
 
-	private Page page;
-
+	Page page;
+	
     // Locators
     public Locator userNameInput;
     public Locator passwordInput;
@@ -22,9 +23,9 @@ public class LoginPage {
     }
 
     // Optional helper method
-    public void login(String username, String password) 
+    public void login(String userName, String password) 
     {
-        userNameInput.fill(username);
+        userNameInput.fill(userName);
         passwordInput.fill(password);
         loginButton.click();
     }

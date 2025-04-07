@@ -1,9 +1,12 @@
 com\neotech\testbase\BaseClass.class
 com\neotech\runners\RegressionRunner.class
 com\neotech\utils\CommonMethods.class
+com\neotech\pages\DashBoardPage.class
 com\neotech\runners\TestRunner.class
 com\neotech\steps\Hooks.class
+com\neotech\runners\FailedRunner.class
 com\neotech\utils\ExcelUtulity.class
+com\neotech\steps\DashSteps.class
 com\neotech\pages\LoginPage.class
 com\neotech\testbase\PageInitializer.class
 com\neotech\utils\ConfigsReader.class

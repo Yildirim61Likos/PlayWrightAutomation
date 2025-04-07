@@ -2,6 +2,9 @@ package com.neotech.testbase;
 
 
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
+
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
@@ -32,6 +35,7 @@ public class BaseClass {
 		
 		switch(browserType.toLowerCase()) 
 		{
+		
 		case"chrome":
 			browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setChannel("chrome").setHeadless(false));
 			break;
@@ -51,12 +55,21 @@ public class BaseClass {
 				
 		}
 		
-		brContext =browser.newContext();
+		//Maximize the window 
+		
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		int width = (int) screenSize.getWidth();
+		int height = (int) screenSize.getHeight();
+		
+		brContext =browser.newContext(new Browser.NewContextOptions()
+			    .setViewportSize(width, height));
 		page=brContext.newPage();
 		
 		String website=ConfigsReader.getProperty("url");
+		
 		//System.out.println("This is the URL COMING FROM jENKINS !!!  "+System.getProperty("WebUrl"));
 		//driver.get(System.getProperty(website));
+		
 		page.navigate(website);
 		
 		Thread.sleep(1000);
@@ -68,7 +81,6 @@ public class BaseClass {
 	
 	public static void tearDown() 
 	{
-		
 		page.context().browser().close();
 	}
 	

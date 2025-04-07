@@ -1,21 +1,21 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>PlaywrightJavaAutomationCucumber</groupId>
-  <artifactId>PlaywrightJavaAutomationCucumber</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  
-  
-  
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>PlaywrightJavaAutomationCucumber</groupId>
+	<artifactId>PlaywrightJavaAutomationCucumber</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+
 	<properties>
-	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
 	</properties>
 
-  
-  
+
 	<dependencies>
-	
+
 		<dependency>
 			<groupId>com.microsoft.playwright</groupId>
 			<artifactId>playwright</artifactId>
@@ -55,9 +55,7 @@
 
 	</dependencies>
 
-  
-  
-  
+
 	<build>
 		<plugins>
 
@@ -66,21 +64,24 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.1.2</version>
 				<configuration>
+				
+
 					<includes>
 						<include>**/*TestRunner.java</include>
 					</includes>
 
 					<testFailureIgnore>true</testFailureIgnore>
-					
+
 					<systemPropertyVariables>
-						
+
 						<WebUrl>${WebUrl}</WebUrl>
-						
+
 					</systemPropertyVariables>
-						
-					
+
+
 				</configuration>
 			</plugin>
+
 
 			<plugin>
 				<groupId>net.masterthought</groupId>
@@ -114,7 +115,5 @@
 		</plugins>
 	</build>
 
-  
-  
-  
+
 </project>

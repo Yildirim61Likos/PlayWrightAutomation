@@ -1,7 +1,7 @@
 Feature: Title of your feature
   I want to use this template for my feature file
 
-  @Playwright
+  @smoke
   Scenario: LoginPage
     When I enter user name 
     And I enter password
