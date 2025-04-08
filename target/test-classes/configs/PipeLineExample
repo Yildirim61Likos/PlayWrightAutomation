@@ -1,0 +1,89 @@
+
+// example pipeline 
+
+pipeline {
+    agent any
+
+    triggers {
+        githubPush() // Triggers this pipeline on push to the dev repo
+    }
+
+    tools {
+        maven 'Maven'
+    }
+
+    environment {
+        TEST_TAG = "@smoke"
+    }
+
+    stages {
+        stage('Build - Dev Repo') {
+            steps {
+                echo '\uD83D\uDD01 Cloning Dev Repo...'
+                git url: 'https://github.com/jglick/simple-maven-project-with-tests.git'
+                echo '\uD83D\uDD28 Building Dev Repo...'
+                sh 'mvn -Dmaven.test.failure.ignore=true clean package'
+            }
+            post {
+                success {
+                    junit '**/target/surefire-reports/TEST-*.xml'
+                    archiveArtifacts 'target/*.jar'
+                }
+            }
+        }
+
+        stage('Checkout QA Automation Repo') {
+            steps {
+                echo '\uD83D\uDCE6 Cloning QA Automation Project...'
+                git branch: 'main', url: 'https://github.com/Yildirim61Likos/PlayWrightAutomation'
+            }
+        }
+
+        stage('Run Playwright QA Tests') {
+            steps {
+                echo '\uD83D\uDE80 Running QA Tests from Playwright Java...'
+                script {
+                    try {
+                        if (isUnix()) {
+                            sh "mvn clean test -Dcucumber.filter.tags=${TEST_TAG}"
+                        } else {
+                            bat "mvn clean test -Dcucumber.filter.tags=${env.TEST_TAG}"
+                        }
+                    } catch (e) {
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+        }
+
+        stage('Publish Test Results') {
+            steps {
+                echo '\uD83D\uDCC8 Publishing Test Results...'
+                junit '**/target/surefire-reports/TEST-*.xml'
+                archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: true
+            }
+        }
+
+        stage('Publish Cucumber HTML Report') {
+            steps {
+                echo '\uD83D\uDCCA Publishing Cucumber HTML Report...'
+                publishHTML([
+                    allowMissing: true,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: 'target/cucumber-html-reports',
+                    reportFiles: 'overview-features.html',
+                    reportName: 'Cucumber Report'
+                ])
+            }
+        }
+    }
+
+    post {
+        always {
+            echo '\uD83E\uDDF9 Cleaning up workspace...'
+            cleanWs()
+        }
+    }
+}
