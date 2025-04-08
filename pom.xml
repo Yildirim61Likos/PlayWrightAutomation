@@ -53,6 +53,7 @@
 		</dependency>
 
 
+
 	</dependencies>
 
 
@@ -70,7 +71,8 @@
 					</includes>
 
 					<testFailureIgnore>true</testFailureIgnore>
-
+					
+				
 					<systemPropertyVariables>
 
 						<WebUrl>${WebUrl}</WebUrl>

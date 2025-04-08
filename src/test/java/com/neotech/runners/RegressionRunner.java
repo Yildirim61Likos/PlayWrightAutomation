@@ -13,7 +13,7 @@ import io.cucumber.junit.CucumberOptions;
     features="src/test/resources/features",
     glue="com.neotech.steps",
     dryRun=false,
-    tags="@Regression",
+    tags="@regression",
     monochrome=true,
 		
 		plugin= 
@@ -26,8 +26,6 @@ import io.cucumber.junit.CucumberOptions;
 	}
 		
 )
-
-
 
 public class RegressionRunner {
 

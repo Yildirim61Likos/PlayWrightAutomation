@@ -2,38 +2,29 @@ package com.neotech.pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.neotech.utils.CommonMethods;
+import com.neotech.testbase.BaseClass;
 
-public class LoginPage extends CommonMethods {
+public class LoginPage {
 
-	Page page;
-	
-    // Locators
+    private Page page;
     public Locator userNameInput;
     public Locator passwordInput;
     public Locator loginButton;
 
-    // Constructor
-    public LoginPage(Page page) 
+    public LoginPage() 
     {
-        this.page = page;
+        this.page = BaseClass.getPage();
         userNameInput = page.locator("//input[@placeholder='Username']");
         passwordInput = page.locator("//input[@id='txtPassword']");
         loginButton = page.locator("//button[@type='submit']");
     }
 
-    // Optional helper method
     public void login(String userName, String password) 
     {
         userNameInput.fill(userName);
         passwordInput.fill(password);
         loginButton.click();
-        
-        
-        
-        
     }
-	
-	
-
 }
+
+

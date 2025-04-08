@@ -2,12 +2,13 @@ package com.neotech.pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.neotech.testbase.BaseClass;
 import com.neotech.utils.CommonMethods;
 
 public class DashBoardPage extends CommonMethods {
 
 
-    Page page;
+    private Page page;
 	
 	//i[normalize-space()='keyboard_arrow_down']
 	
@@ -15,9 +16,9 @@ public class DashBoardPage extends CommonMethods {
 	
 
     // Constructor
-    public DashBoardPage(Page page) 
+    public DashBoardPage() 
     {
-        this.page = page;
+    	this.page = BaseClass.getPage();
         dashName = page.locator("//img[@class='circle account-photo']");
         
     }
