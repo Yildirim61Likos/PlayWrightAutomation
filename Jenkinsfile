@@ -1,35 +1,54 @@
-node {
+node 
+{
     def mvnHome
 
-    stage('Preparation') {
-        // Clone the Playwright Java project
-        git branch: 'main', url: 'https://github.com/Yildirim61Likos/PlayWrightAutomation'
+    // Optional: use triggers in a declarative pipeline only
+    // triggers {
+    //     githubPush()
+    // }
 
-        // Use Maven tool configured in Jenkins global tools (name it 'Maven' there)
-        mvnHome = tool 'Maven'
+    stage('Checkout Repository') 
+    {
+        echo 'Cloning Playwright Java project...'
+        git branch: 'main', url: 'https://github.com/Yildirim61Likos/PlayWrightAutomation'
+        mvnHome = tool 'Maven' // Make sure "Maven" is defined in Global Tools
     }
 
-    stage('Run Tests') {
-        // Run Playwright+Cucumber tests using Maven
-        withEnv(["MVN_HOME=$mvnHome"]) {
-            if (isUnix()) {
-                sh '"$MVN_HOME/bin/mvn" clean test -Dcucumber.filter.tags="@smoke"'
-            } else {
-                bat(/"%MVN_HOME%\bin\mvn" clean test -Dcucumber.filter.tags="@smoke"/)
+    stage('Run Playwright Tests') 
+    {
+        echo 'Running Playwright + Cucumber tests...'
+        def testTag = "@smoke" // Change this if needed or pass as parameter
+
+        withEnv(["MVN_HOME=$mvnHome"]) 
+        {
+            try 
+            {
+                if (isUnix()) 
+                {
+                    sh "\"$MVN_HOME/bin/mvn\" clean test -Dcucumber.filter.tags=${testTag}"
+                } else 
+                {
+                    bat(/"%MVN_HOME%\bin\mvn" clean test -Dcucumber.filter.tags=${testTag}/)
+                }
+            } catch (e) 
+            {
+                echo "Test execution failed: ${e.getMessage()}"
+                currentBuild.result = 'FAILURE'
+                throw e
             }
         }
     }
 
-    stage('Publish Test Results') {
-        // Publish test results from Surefire
+    stage('Publish Test Results') 
+    {
+        echo 'Publishing test reports...'
         junit '**/target/surefire-reports/TEST-*.xml'
-        
-        // Optionally archive test artifacts like logs, jars, or screenshots
         archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: true
     }
 
-    stage('Publish Cucumber HTML Report') {
-        // If you're generating HTML Cucumber reports
+    stage('Publish Cucumber HTML Report') 
+    {
+        echo 'Publishing Cucumber HTML Report...'
         publishHTML([
             allowMissing: true,
             alwaysLinkToLastBuild: true,
@@ -40,7 +59,9 @@ node {
         ])
     }
 
-    stage('Cleanup') {
+    stage('Cleanup Workspace') 
+    {
+        echo 'Cleaning up workspace...'
         cleanWs()
     }
 }
