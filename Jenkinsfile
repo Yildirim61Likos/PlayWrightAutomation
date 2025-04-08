@@ -3,9 +3,10 @@ node
     def mvnHome
 
     // Optional: use triggers in a declarative pipeline only
-    // triggers {
-    //     githubPush()
-    // }
+    triggers 
+    {
+       githubPush()
+    }
 
     stage('Checkout Repository') 
     {
