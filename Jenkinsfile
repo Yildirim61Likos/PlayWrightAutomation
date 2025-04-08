@@ -1,73 +1,86 @@
-node 
+pipeline 
 {
-    def mvnHome
+    agent any
 
-    // Optional: use triggers in a declarative pipeline only
     triggers 
     {
-       githubPush()
+        githubPush()
     }
 
-    stage('Checkout Repository') 
+    tools 
     {
-        echo 'Cloning Playwright Java project...'
-        git branch: 'main', url: 'https://github.com/Yildirim61Likos/PlayWrightAutomation'
-        mvnHome = tool 'Maven' // Make sure "Maven" is defined in Global Tools
+        maven 'Maven'
     }
 
-    stage('Run Playwright Tests') 
+    environment 
     {
-        echo 'Running Playwright + Cucumber tests...'
-        def testTag = "@smoke" // Change this if needed or pass as parameter
+        TEST_TAG = "@smoke"
+    }
 
-        withEnv(["MVN_HOME=$mvnHome"]) 
+    stages 
+    {
+        stage('Checkout Repository') 
         {
-            try 
+            steps 
             {
-                if (isUnix()) 
+                git branch: 'main', url: 'https://github.com/Yildirim61Likos/PlayWrightAutomation'
+            }
+        }
+
+        stage('Run Playwright Tests') 
+        {
+            steps 
+            {
+                script 
                 {
-                    sh "\"$MVN_HOME/bin/mvn\" clean test -Dcucumber.filter.tags=${testTag}"
-                } else 
-                {
-                    bat(/"%MVN_HOME%\bin\mvn" clean test -Dcucumber.filter.tags=${testTag}/)
+                    try 
+                    {
+                        if (isUnix()) 
+                        {
+                            sh 'mvn clean test -Dcucumber.filter.tags=${TEST_TAG}'
+                        } else 
+                        {
+                            bat "mvn clean test -Dcucumber.filter.tags=${env.TEST_TAG}"
+                        }
+                    } catch (e) 
+                    {
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
                 }
-            } catch (e) 
+            }
+        }
+
+        stage('Publish Test Results') 
+        {
+            steps 
             {
-                echo "Test execution failed: ${e.getMessage()}"
-                currentBuild.result = 'FAILURE'
-                throw e
+                junit '**/target/surefire-reports/TEST-*.xml'
+                archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: true
+            }
+        }
+
+        stage('Publish Cucumber HTML Report') 
+        {
+            steps 
+            {
+                publishHTML([
+                    allowMissing: true,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: 'target/cucumber-html-reports',
+                    reportFiles: 'overview-features.html',
+                    reportName: 'Cucumber Report'
+                ])
             }
         }
     }
 
-    stage('Publish Test Results') 
+    post 
     {
-        echo 'Publishing test reports...'
-        junit '**/target/surefire-reports/TEST-*.xml'
-        archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: true
+        always 
+        {
+            cleanWs()
+        }
     }
-
-    stage('Publish Cucumber HTML Report') 
-    {
-        echo 'Publishing Cucumber HTML Report...'
-        publishHTML([
-            allowMissing: true,
-            alwaysLinkToLastBuild: true,
-            keepAll: true,
-            reportDir: 'target/cucumber-html-reports',
-            reportFiles: 'overview-features.html',
-            reportName: 'Cucumber Report'
-        ])
-    }
-
-    stage('Cleanup Workspace') 
-    {
-        echo 'Cleaning up workspace...'
-        cleanWs()
-    }
-    
-    
-    
-    
-    
 }
