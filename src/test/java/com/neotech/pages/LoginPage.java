@@ -28,6 +28,10 @@ public class LoginPage extends CommonMethods {
         userNameInput.fill(userName);
         passwordInput.fill(password);
         loginButton.click();
+        
+        
+        
+        
     }
 	
 	
